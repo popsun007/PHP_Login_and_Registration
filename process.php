@@ -47,13 +47,16 @@ function register($post){
 }
 
 function login($post) {
+	if (empty($_POST['log_email'])||empty($_POST['log_password'])){
+		$_SESSION['errors'][] = "User name or password can not be empty!";
+	}
 	$query = "SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM login_out 
 			WHERE email = '{$_POST['log_email']}' AND password = '{$_POST['log_password']}';" ;
 	$infos = fetch($query);
 	if($infos){
 		$_SESSION['user_id'] = $infos[0]['id'];
 		$_SESSION['user_name'] = $infos[0]['name'];
-		header("location: success.php");  
+		header("location: success.php"); 
 	}
 	else{
 		$_SESSION['errors'][] = "User name and password don't match!";
@@ -61,6 +64,8 @@ function login($post) {
 }
 
 if(isset($_SESSION['errors'])){
+	unset($_SESSION['log_in']);
+
 	header("location: index.php");
 	die();
 }
